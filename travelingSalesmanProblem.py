@@ -39,7 +39,7 @@ class TSP:
         else:
             self.distances = cdist(self.stations, self.stations)
 
-    def plot(self, animate=False):
+    def plot(self, animate=True):
         "Visualize the problem, and solution if available"
 
         fig, ax = plt.subplots()
@@ -79,6 +79,8 @@ class TSP:
 
             anim = animation.FuncAnimation(fig, update_quiver, fargs=(
                 quiver, self.all_solutions, self.all_cost), interval=50, blit=False, frames=len(self.all_cost), repeat_delay=3000)
+            anim.save(f'gifs/{self.name.replace(" ","_")}.gif', fps=10,
+                      writer='imagemagick')
         plt.show()
 
     def animate(self):

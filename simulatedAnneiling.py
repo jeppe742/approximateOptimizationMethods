@@ -9,10 +9,10 @@ class SimulatedAnneiling(TSP):
     https://doi.org/10.1126%2Fscience.220.4598.671
     """
 
-    def __init__(self, stations=None, n_max=5000):
+    def __init__(self, stations=None, distances=None, n_max=10000):
         "Create problem for stations to visit"
 
-        super().__init__(stations)
+        super().__init__(stations, distances)
 
         self.name = "Simulated Anneiling"
         self.n_max = n_max
@@ -33,7 +33,7 @@ class SimulatedAnneiling(TSP):
 
         return S
 
-    def solve(self, steps=False):
+    def solve(self, steps=True):
         "Solves the traveling salesman problem using simulated anneiling. steps=True returns all iterations"
 
         # let's start at station 1
@@ -48,14 +48,14 @@ class SimulatedAnneiling(TSP):
 
         self.cost = self._get_cost(self.solution)
 
+        i = 1
         # Run the anneiling for n_max iterations
         for k in range(self.n_max):
-
             update = False
 
             # Update "temperature"
             #T = 1/np.sqrt(1+k)
-            T = 10*0.99**k
+            T = 100*0.999**k
             # Generate new solution candidate, by permuting the currest best
             candidate = self._permute(self.solution)
 
@@ -74,9 +74,11 @@ class SimulatedAnneiling(TSP):
                     update = True
 
             if update:
+                i += 1
+
                 self.solution = candidate
                 self.cost = cost_candidate
-                if steps:
+                if steps and i % 10 == 0:
                     self.all_cost.append(self.cost)
                     self.all_solutions.append(self.solution)
 
@@ -84,6 +86,15 @@ class SimulatedAnneiling(TSP):
 
 
 if __name__ == "__main__":
-    s = SimulatedAnneiling(stations=10*np.random.random((15, 2)))
-    s.solve(steps=True)
-    s.plot(animate=True)
+    stations = np.loadtxt('data/dantzig42_stations.txt', delimiter=',')
+    distances = np.loadtxt('data/dantzig42_distances.txt', delimiter=',')
+
+    cost = float("inf")
+    s_best = None
+    for i in range(100):
+        s = SimulatedAnneiling(stations=stations, distances=distances)
+        s.solve()
+        if s.cost < cost:
+            s_best = s
+            cost = s.cost
+    s_best.plot()
