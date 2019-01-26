@@ -19,8 +19,7 @@ class TSP:
         if stations is not None:
             self.stations = stations
         else:
-            self.stations = [[np.cos(pi), np.sin(pi)]
-                             for pi in np.linspace(-np.pi, np.pi*3/4, 8)]
+            self.stations = [[np.cos(pi), np.sin(pi)] for pi in np.linspace(-np.pi, np.pi*3/4, 8)]
 
         # Convert list to numpy array
         if isinstance(self.stations, list):
@@ -30,7 +29,7 @@ class TSP:
         self.solution = []
         self.all_solutions = []
         self.all_cost = []
-        self.cost = 0
+        self.cost = float("inf")
         self.name = None
 
         # calculate the euclidean norm if nothing is given
@@ -57,8 +56,7 @@ class TSP:
             Y = station_route[:-1, 1]
             U = station_route[1:, 0] - station_route[:-1, 0]
             V = station_route[1:, 1] - station_route[:-1, 1]
-            quiver = plt.quiver(X, Y, U, V, scale_units='xy',
-                                angles='xy', scale=1)
+            quiver = plt.quiver(X, Y, U, V, scale_units='xy', angles='xy', scale=1)
         if animate:
             if len(self.all_cost) == 0:
                 raise RuntimeError(
@@ -77,8 +75,14 @@ class TSP:
                     f"Traveling Salesman Problem. model:{self.name}  cost:{all_cost[i]:.2f}")
                 return quiver
 
-            anim = animation.FuncAnimation(fig, update_quiver, fargs=(
-                quiver, self.all_solutions, self.all_cost), interval=50, blit=False, frames=len(self.all_cost), repeat_delay=3000)
+            anim = animation.FuncAnimation(fig, update_quiver,
+                                           fargs=(quiver,
+                                                  self.all_solutions,
+                                                  self.all_cost),
+                                           interval=50,
+                                           blit=False,
+                                           frames=len(self.all_cost),
+                                           repeat_delay=3000)
             anim.save(f'gifs/{self.name.replace(" ","_")}.gif', fps=10,
                       writer='imagemagick')
         plt.show()
@@ -94,7 +98,7 @@ class TSP:
         plt.ylabel('y')
 
     def _get_cost(self, solution):
-        "Returns the cost of a given solution"
+        "Returns the cost of the current solution"
         cost = 0
         for i in range(self.n_stations):
             cost += self.distances[solution[i] - 1, solution[i + 1] - 1]

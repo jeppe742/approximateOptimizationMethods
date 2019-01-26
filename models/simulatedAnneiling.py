@@ -9,13 +9,13 @@ class SimulatedAnneiling(TSP):
     https://doi.org/10.1126%2Fscience.220.4598.671
     """
 
-    def __init__(self, stations=None, distances=None, n_max=10000):
+    def __init__(self, stations=None, distances=None, iterations=10000):
         "Create problem for stations to visit"
 
         super().__init__(stations, distances)
 
         self.name = "Simulated Anneiling"
-        self.n_max = n_max
+        self.n_max = iterations
 
     def _permute(self, solution):
         "Returns the solution, where two indicies has been randomly permuted"
@@ -92,6 +92,7 @@ if __name__ == "__main__":
     cost = float("inf")
     s_best = None
     for i in range(100):
+        print(f"Running simulation {i}/100")
         s = SimulatedAnneiling(stations=stations, distances=distances)
         s.solve()
         if s.cost < cost:
